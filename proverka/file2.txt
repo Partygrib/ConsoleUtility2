@@ -1,0 +1,9 @@
+file3.txt
+lastModifiedTime: Thu Apr 16 17:51:02 YEKT 2020
+Size: 0 bytes
+file2.txt
+lastModifiedTime: Sat Apr 18 01:12:21 YEKT 2020
+Size: 0 bytes
+file1.txt
+lastModifiedTime: Sat Apr 18 00:28:13 YEKT 2020
+Size: 126 bytes

@@ -8,11 +8,11 @@ import org.kohsuke.args4j.Option;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileStore;
-import java.nio.file.Files;
-import java.util.Arrays;
 
 public class LsLauncher {
+
+    @Option(name = "-h", usage = "human-readable")
+    private boolean hum;
 
     @Option(name = "-l", usage = "long")
     private boolean lon;
@@ -26,6 +26,9 @@ public class LsLauncher {
     @Argument(required = true,metaVar = "InputName", usage = "Input dir")
     public String dir;
 
+    public LsLauncher() {
+    }
+
     public static void main(String[] args) {
         new LsLauncher().launch(args);
     }
@@ -36,29 +39,27 @@ public class LsLauncher {
             parser.parseArgument(args);
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
-            System.err.println("java -jar Ls.jar dir");
+            System.err.println("java -jar Ls.jar [-l] [-h] [-r] [-o output.file] directory_or_file");
             parser.printUsage(System.err);
             return;
         }
 
-        Ls ls = new Ls(rev, lon);
-        File[] result = ls.respect(dir);
+        Ls ls = new Ls();
+        File[] result = ls.info(dir);
         if (out != null) {
             try{
                 FileWriter writer = new FileWriter(out);
                 if(rev) {
                     for (int i = result.length - 1; i >= 0; i--) {
-                        writer.write(result[i].getName()+ "\n");
-                        if (lon) {
-                            writer.write("lastModifiedTime: " + result[i].lastModified() + "\n");
-                        }
+                        writer.write(ls.name(result[i]) + "\n");
+                        if (lon) writer.write(ls.longer(result[i]) + "\n");
+                        if (hum) writer.write(ls.human(result[i]) + "\n");
                     }
                 }
                 else for (File file : result) {
-                    writer.write(file.getName() + "\n");
-                    if (lon) {
-                        writer.write("lastModifiedTime: " + file.lastModified() + "\n");
-                    }
+                    writer.write(ls.name(file) + "\n");
+                    if (lon) writer.write(ls.longer(file) + "\n");
+                    if (hum) writer.write(ls.human(file) + "\n");
                 }
                 writer.close();
             } catch (IOException e) {
@@ -68,17 +69,15 @@ public class LsLauncher {
         else {
             if(rev) {
                 for (int i = result.length - 1;i >= 0;i--) {
-                    System.out.println(result[i].getName());
-                    if (lon) {
-                        System.out.println("lastModifiedTime: " + result[i].lastModified() + "\n");
-                    }
+                    System.out.println(ls.name(result[i]));
+                    if (lon) System.out.println(ls.longer(result[i]));
+                    if (hum) System.out.println(ls.human(result[i]));
                 }
             }
             else for (File file : result) {
-                System.out.println(file.getName());
-                if (lon) {
-                    System.out.println("lastModifiedTime: " + file.lastModified() + "\n");
-                }
+                System.out.println(ls.name(file));
+                if (lon) System.out.println(ls.longer(file));
+                if (hum) System.out.println(ls.human(file));
             }
         }
     }

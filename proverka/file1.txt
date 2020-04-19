@@ -1,3 +1,21 @@
-file3.txt
-file2.txt
-file1.txt
+Name: file3.txt
+lastModifiedTime: Sat Apr 18 17:35:10 YEKT 2020
+Size: 1 bytes
+Size ~ 1 kilobytes
+File can read
+File can write
+File can execute
+Name: file2.txt
+lastModifiedTime: Sat Apr 18 01:12:21 YEKT 2020
+Size: 218 bytes
+Size ~ 1 kilobytes
+File can read
+File can write
+File can execute
+Name: file1.txt
+lastModifiedTime: Sun Apr 19 20:59:33 YEKT 2020
+Size: 0 bytes
+Size ~ 1 kilobytes
+File can read
+File can write
+File can execute
