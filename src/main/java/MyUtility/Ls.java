@@ -5,14 +5,13 @@ import java.util.Date;
 
 public class Ls {
 
-    public File[] info(String dir) {
-        File file = new File(dir);
-        if(file.isDirectory()) {
-            return file.listFiles();
+    public File[] info(File f) {
+        if(f.isDirectory()) {
+            return f.listFiles();
         }
         else {
             try {
-                if (file.exists()) return new File[]{file};
+                if (f.exists()) return new File[]{f};
                 else throw new FileNotFoundException("Такого файла/директории не существует!");
             } catch (FileNotFoundException ex){
                 System.out.println(ex.getMessage());
@@ -25,7 +24,8 @@ public class Ls {
 
     public String longer(File file) {
         Date last = new Date(file.lastModified());
-        return "lastModifiedTime: " + last + "\n" + "Size: " + file.length() + " bytes";
+        return "lastModifiedTime: " + last + System.lineSeparator()
+                + "Size: " + file.length() + " bytes";
     }
 
     public String human(File file) {
@@ -34,25 +34,25 @@ public class Ls {
         long r = file.length();
         if (r > 1024 * 1024 * 1024) {
             r = r / (1024 * 1024 * 1024);
-            str2 = "Size ~ " + r + " gigabytes" + "\n";
+            str2 = "Size ~ " + r + " gigabytes" + System.lineSeparator();
         }
         else {
             if (r > 1024 * 1024) {
                 r = r / (1024 * 1024);
-                str2 = "Size ~ " + r + " megabytes" + "\n";
+                str2 = "Size ~ " + r + " megabytes" + System.lineSeparator();
             }
             else {
                 r = r / 1024;
                 if (r == 0) r = 1;
                 if (file.length() == 0) r = 0;
-                str2 = "Size ~ " + r + " kilobytes" + "\n";
+                str2 = "Size ~ " + r + " kilobytes" + System.lineSeparator();
             }
         }
         str1 = str1.concat(str2);
-        if (file.canRead()) str1 = str1.concat("File can read" + "\n");
-        else str1 = str1.concat("File can not read" + "\n");
-        if (file.canWrite()) str1 = str1.concat("File can write" + "\n");
-        else str1 = str1.concat("File can not write" + "\n");
+        if (file.canRead()) str1 = str1.concat("File can read" + System.lineSeparator());
+        else str1 = str1.concat("File can not read" + System.lineSeparator());
+        if (file.canWrite()) str1 = str1.concat("File can write" + System.lineSeparator());
+        else str1 = str1.concat("File can not write" + System.lineSeparator());
         if (file.canExecute()) str1 = str1.concat("File can execute");
         else str1 = str1.concat("File can not execute");
         return str1;

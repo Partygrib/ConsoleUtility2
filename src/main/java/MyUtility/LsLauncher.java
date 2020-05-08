@@ -21,19 +21,16 @@ public class LsLauncher {
     private boolean rev;
 
     @Option(name="-o",usage="output")
-    private String out;
+    private File out;
 
     @Argument(required = true,metaVar = "InputName", usage = "Input dir")
-    public String dir;
+    private File f;
 
-    public LsLauncher() {
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new LsLauncher().launch(args);
     }
 
-    public void launch(String[] args) {
+    public void launch(String[] args) throws IOException {
         CmdLineParser parser = new CmdLineParser(this);
         try {
             parser.parseArgument(args);
@@ -45,25 +42,25 @@ public class LsLauncher {
         }
 
         Ls ls = new Ls();
-        File[] result = ls.info(dir);
+        File[] result = ls.info(f);
         if (out != null) {
-            try{
-                FileWriter writer = new FileWriter(out);
+            try (FileWriter writer = new FileWriter(out)) {
                 if(rev) {
                     for (int i = result.length - 1; i >= 0; i--) {
-                        writer.write(ls.name(result[i]) + "\n");
-                        if (lon) writer.write(ls.longer(result[i]) + "\n");
-                        if (hum) writer.write(ls.human(result[i]) + "\n");
+                        writer.write(ls.name(result[i]) + System.lineSeparator());
+                        if (lon) writer.write(ls.longer(result[i]) + System.lineSeparator());
+                        if (hum) writer.write(ls.human(result[i]) + System.lineSeparator());
                     }
                 }
                 else for (File file : result) {
-                    writer.write(ls.name(file) + "\n");
-                    if (lon) writer.write(ls.longer(file) + "\n");
-                    if (hum) writer.write(ls.human(file) + "\n");
+                    writer.write(ls.name(file) + System.lineSeparator());
+                    if (lon) writer.write(ls.longer(file) + System.lineSeparator());
+                    if (hum) writer.write(ls.human(file) + System.lineSeparator());
                 }
                 writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new IOException();
             }
         }
         else {
