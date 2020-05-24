@@ -5,56 +5,73 @@ import java.util.Date;
 
 public class Ls {
 
-    public File[] info(File f) {
-        if(f.isDirectory()) {
+    public static File[] info(File f) {
+        if (f.isDirectory()) {
             return f.listFiles();
+        } else {
+            if (f.exists()) return new File[]{f};
+            return null;
         }
-        else {
-            try {
-                if (f.exists()) return new File[]{f};
-                else throw new FileNotFoundException("Такого файла/директории не существует!");
-            } catch (FileNotFoundException ex){
-                System.out.println(ex.getMessage());
-            }
-        }
-        return null;
     }
 
-    public String name(File file) { return "Name: " + file.getName(); }
+    public static String name(File file) { return "Name: " + file.getName(); }
 
-    public String longer(File file) {
+    public static String longer(File file, boolean mod) {
         Date last = new Date(file.lastModified());
-        return "lastModifiedTime: " + last + System.lineSeparator()
-                + "Size: " + file.length() + " bytes";
+        if (mod) return "lastModifiedTime: " + last;
+        else return "lastModifiedTime: " + last + System.lineSeparator()
+                + "Size: " + size(file) + " bytes"
+                + System.lineSeparator() + root(file, "1", "1", "1", "0");
     }
 
-    public String human(File file) {
-        String str1 = "";
-        String str2;
-        long r = file.length();
-        if (r > 1024 * 1024 * 1024) {
-            r = r / (1024 * 1024 * 1024);
-            str2 = "Size ~ " + r + " gigabytes" + System.lineSeparator();
-        }
-        else {
-            if (r > 1024 * 1024) {
-                r = r / (1024 * 1024);
-                str2 = "Size ~ " + r + " megabytes" + System.lineSeparator();
+    public static String root(File file, String r, String w, String x, String z) {
+        String str = "";
+        if (file.canRead()) str = str.concat(r);
+        else str = str.concat(z);
+        if (file.canWrite()) str = str.concat(w);
+        else str = str.concat(z);
+        if (file.canExecute()) str = str.concat(x);
+        else str = str.concat(z);
+        return str;
+    }
+
+    public static long size(File file) {
+        if (file.isDirectory()) {
+            long l = 0;
+            File[] files = file.listFiles();
+            for (File value : files) {
+                if (value.isFile())
+                    l += value.length();
+                else l += size(value);
             }
-            else {
-                r = r / 1024;
-                if (r == 0) r = 1;
-                if (file.length() == 0) r = 0;
-                str2 = "Size ~ " + r + " kilobytes" + System.lineSeparator();
-            }
+            return l;
         }
-        str1 = str1.concat(str2);
-        if (file.canRead()) str1 = str1.concat("File can read" + System.lineSeparator());
-        else str1 = str1.concat("File can not read" + System.lineSeparator());
-        if (file.canWrite()) str1 = str1.concat("File can write" + System.lineSeparator());
-        else str1 = str1.concat("File can not write" + System.lineSeparator());
-        if (file.canExecute()) str1 = str1.concat("File can execute");
-        else str1 = str1.concat("File can not execute");
-        return str1;
+        else return file.length();
+    }
+
+    public static String human(File file) {
+        int k = 0;
+        int n = 1024;
+        String p = "";
+        long r = size(file);
+        if (r < n && r!= 0) r = 1;
+        while (r >= n) {
+            r /= n;
+            k++;
+        }
+        switch (k) {
+            case 0:
+            case 1:
+                p = " kilo";
+                break;
+            case 2:
+                p = " mega";
+                break;
+            case 3:
+                p = " giga";
+                break;
+        }
+        return "Size ~ " + r + p + "bytes" + System.lineSeparator()
+                + root(file, "r", "w", "x", "-");
     }
 }
